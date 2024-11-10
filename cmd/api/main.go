@@ -11,23 +11,26 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+
+	"github.com/clebsonsh/greenlight/internal/data"
 )
 
 const version = "1.0.0"
 
 type config struct {
-	env  string
-	port int
-	db   struct {
+	env string
+	db  struct {
 		dsn          string
 		maxOpenConns int
 		maxIdleConns int
 		maxIdleTime  time.Duration
 	}
+	port int
 }
 
 type application struct {
 	logger *slog.Logger
+	models data.Models
 	config config
 }
 
@@ -65,6 +68,7 @@ func main() {
 	app := &application{
 		config: cfg,
 		logger: logger,
+		models: data.NewModel(db),
 	}
 
 	srv := &http.Server{
