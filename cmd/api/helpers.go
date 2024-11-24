@@ -136,6 +136,9 @@ func (app *application) readInt(qs url.Values, key string, defaultValue int, v *
 }
 
 func (app *application) background(fn func()) {
+	// Increment the WaitGroup counter.
+	app.wg.Add(1)
+
 	// Launch a background goroutine.
 	go func() {
 		// Recover any panic.
