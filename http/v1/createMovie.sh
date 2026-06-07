@@ -1,7 +1,7 @@
 BODY='{
     "title": "Moana",
     "year": 2016,
-    "runtime": 107,
+    "runtime": "107 mins",
     "genres": [
         "animation",
         "adventure"
@@ -15,7 +15,7 @@ echo -e "-------------------"
 BODY='{
     "title": "Inception",
     "year": 2010,
-    "runtime": 148,
+    "runtime": "148 mins",
     "genres": [
         "action",
         "sci-fi",
@@ -30,7 +30,7 @@ echo -e "-------------------"
 BODY='{
     "title": "The Godfather",
     "year": 1972,
-    "runtime": 175,
+    "runtime": "175 mins",
     "genres": [
         "crime",
         "drama"
