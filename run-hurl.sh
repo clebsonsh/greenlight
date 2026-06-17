@@ -27,6 +27,7 @@ hurl --test http/v1/healthcheck.hurl
 hurl --test http/v1/createMovie.hurl
 hurl --test http/v1/showMovie.hurl
 hurl --test http/v1/updateMovie.hurl
+hurl --test http/v1/deleteMovie.hurl
 
 # Kill server
 lsof -ti :4000 | xargs kill -9
