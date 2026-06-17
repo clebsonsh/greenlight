@@ -10,47 +10,86 @@ POST http://localhost:4000/v1/movies
     ]
 }
 
-HTTP 200
+HTTP 201
 [Asserts]
-header "Content-Type" == "text/plain; charset=utf-8"
-body == "{Title:Moana Year:2016 Runtime:107 Genres:[animation adventure]}\n"
+header "Content-Type" == "application/json"
+jsonpath "$.movie.title" == "Moana"
+jsonpath "$.movie.year" == 2016
+jsonpath "$.movie.runtime" == "107 mins"
+jsonpath "$.movie.genres[0]" == "animation"
+jsonpath "$.movie.genres[1]" == "adventure"
+jsonpath "$.movie.id" exists
+jsonpath "$.movie.version" exists
 
 
-# Create Movie: Inception (Valid)
+# Create Movie: Black Panther (Valid)
 POST http://localhost:4000/v1/movies
 {
-    "title": "Inception",
-    "year": 2010,
-    "runtime": "148 mins",
+    "title": "Black Panther",
+    "year": 2018,
+    "runtime": "134 mins",
     "genres": [
         "action",
-        "sci-fi",
-        "thriller"
+        "adventure"
     ]
 }
 
-HTTP 200
+HTTP 201
 [Asserts]
-header "Content-Type" == "text/plain; charset=utf-8"
-body == "{Title:Inception Year:2010 Runtime:148 Genres:[action sci-fi thriller]}\n"
+header "Content-Type" == "application/json"
+jsonpath "$.movie.title" == "Black Panther"
+jsonpath "$.movie.year" == 2018
+jsonpath "$.movie.runtime" == "134 mins"
+jsonpath "$.movie.genres[0]" == "action"
+jsonpath "$.movie.genres[1]" == "adventure"
+jsonpath "$.movie.id" exists
+jsonpath "$.movie.version" exists
 
 
-# Create Movie: The Godfather (Valid)
+# Create Movie: Deadpool (Valid)
 POST http://localhost:4000/v1/movies
 {
-    "title": "The Godfather",
-    "year": 1972,
-    "runtime": "175 mins",
+    "title": "Deadpool",
+    "year": 2016,
+    "runtime": "108 mins",
     "genres": [
-        "crime",
+        "action",
+        "comedy"
+    ]
+}
+
+HTTP 201
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$.movie.title" == "Deadpool"
+jsonpath "$.movie.year" == 2016
+jsonpath "$.movie.runtime" == "108 mins"
+jsonpath "$.movie.genres[0]" == "action"
+jsonpath "$.movie.genres[1]" == "comedy"
+jsonpath "$.movie.id" exists
+jsonpath "$.movie.version" exists
+
+
+# Create Movie: The Breakfast Club (Valid)
+POST http://localhost:4000/v1/movies
+{
+    "title": "The Breakfast Club",
+    "year": 1986,
+    "runtime": "96 mins",
+    "genres": [
         "drama"
     ]
 }
 
-HTTP 200
+HTTP 201
 [Asserts]
-header "Content-Type" == "text/plain; charset=utf-8"
-body == "{Title:The Godfather Year:1972 Runtime:175 Genres:[crime drama]}\n"
+header "Content-Type" == "application/json"
+jsonpath "$.movie.title" == "The Breakfast Club"
+jsonpath "$.movie.year" == 1986
+jsonpath "$.movie.runtime" == "96 mins"
+jsonpath "$.movie.genres[0]" == "drama"
+jsonpath "$.movie.id" exists
+jsonpath "$.movie.version" exists
 
 
 # Create Movie: Empty Body
