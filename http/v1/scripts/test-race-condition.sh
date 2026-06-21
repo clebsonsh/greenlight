@@ -1,17 +1,37 @@
-# Capture start time
+#!/bin/sh
+
+test_name="$1"
+method="$2"
+url="$3"
+body="$4"
+count="${5:-10}"
+
+if [ -z "$test_name" ] || [ -z "$method" ] || [ -z "$url" ]; then
+  echo "Usage: $0 <test-name> <method> <url> [body-template] [count]"
+  echo ""
+  echo "  <test-name>      Label for the test output"
+  echo "  <method>         HTTP method (GET, POST, PATCH, PUT, DELETE)"
+  echo "  <url>            Full request URL"
+  echo "  [body-template]  JSON body with {} placeholder (empty = no body)"
+  echo "  [count]          Concurrent requests (default: 10)"
+  exit 1
+fi
+
 START=$(date +%s%N)
 
-# Run 10 concurrent curls via xargs, collect all status codes into a variable
-RESULTS=$(seq 1 10 | xargs -P 10 -I {} curl -s -o /dev/null -w "%{http_code}\n" \
-  -X PATCH http://localhost:4000/v1/movies/1 \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Update {}"}')
+if [ -n "$body" ]; then
+  RESULTS=$(seq 1 "$count" | xargs -P "$count" -I {} curl -s -o /dev/null -w "%{http_code}\n" \
+    -X "$method" "$url" \
+    -H "Content-Type: application/json" \
+    -d "$body")
+else
+  RESULTS=$(seq 1 "$count" | xargs -P "$count" -I {} curl -s -o /dev/null -w "%{http_code}\n" \
+    -X "$method" "$url")
+fi
 
-# Capture end time and calculate duration
 END=$(date +%s%N)
 DURATION_MS=$(( (END - START) / 1000000 ))
 
-# Parse results
 SUCCESS=0
 CONFLICT=0
 OTHER=0
@@ -26,7 +46,6 @@ while read STATUS; do
   esac
 done <<< "$RESULTS"
 
-# Determine pass/fail
 if [ $CONFLICT -gt 0 ]; then
   RESULT="${GREEN}${BOLD}Success${NC}"
   SUCCEEDED=1
@@ -37,8 +56,7 @@ else
   FAILED=1
 fi
 
-# Output in hurl format
-printf "%b ${BOLD}http/v1/scripts/test-movie-race-condition.sh ${NC}(10 request(s) in %d ms)\n" "$RESULT" "$DURATION_MS"
+printf "%b ${BOLD}%s ${NC}(%s request(s) in %d ms)\n" "$RESULT" "$test_name" "$count" "$DURATION_MS"
 echo "--------------------------------------------------------------------------------"
 printf "Executed files:    1\n"
 printf "Executed requests: %d (%.1f/s)\n" "$TOTAL" "$(echo "scale=1; $TOTAL * 1000 / $DURATION_MS" | bc)"

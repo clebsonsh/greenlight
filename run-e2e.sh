@@ -32,11 +32,16 @@ done
 # Run hurl tests
 hurl --test http/v1/health/check.hurl
 hurl --test http/v1/movies/create.hurl
+hurl --test http/v1/movies/list.hurl
 hurl --test http/v1/movies/show.hurl
 hurl --test http/v1/movies/update.hurl
 hurl --test http/v1/movies/delete.hurl
 
-./http/v1/scripts/test-movie-race-condition.sh
+echo ""
+echo "${BOLD}${YELLOW}━━━ Race Condition Tests ━━━${NC}"
+echo ""
+
+./http/v1/scripts/test-update-movie-race-condition.sh
 
 # Kill server
 lsof -ti :4000 | xargs kill -9
