@@ -16,8 +16,8 @@ migrate -path=migrations -database=$GREENLIGHT_DB_DSN up
 # Kill server
 lsof -ti :4000 | xargs kill -9
 
-# Start server in background
-go run ./cmd/api > /dev/null 2>&1 &
+# Start server in background without rate limiting
+go run ./cmd/api -limiter-enabled=false > /dev/null 2>&1 &
 
 # Wait for server to be ready
 echo "Waiting for server to start..."
