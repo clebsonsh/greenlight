@@ -48,6 +48,7 @@ hurl --test http/v1/movies/list.hurl
 hurl --test http/v1/movies/show.hurl
 hurl --test http/v1/movies/update.hurl
 hurl --test http/v1/movies/delete.hurl
+hurl --test http/v1/users/create.hurl
 
 echo ""
 echo "${BOLD}${YELLOW}━━━ Rate Limit Tests ━━━${NC}"
