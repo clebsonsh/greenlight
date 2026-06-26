@@ -21,20 +21,21 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	user := &data.User{
-		Name:      input.Name,
-		Email:     input.Email,
-		Activated: false,
-	}
-
 	v := validator.New()
 
-	data.ValidadeUser(v, user)
+	data.ValidadeName(v, input.Name)
+	data.ValidateEmail(v, input.Email)
 	data.ValidatePasswordPlaintext(v, input.Password)
 
 	if !v.Valid() {
 		app.failedValidationResponse(w, r, v.Errors)
 		return
+	}
+
+	user := &data.User{
+		Name:      input.Name,
+		Email:     input.Email,
+		Activated: false,
 	}
 
 	err = user.Password.Set(input.Password)
