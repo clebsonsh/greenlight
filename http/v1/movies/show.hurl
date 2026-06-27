@@ -1,5 +1,6 @@
 # Show Movie with ID 1
 GET http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
 
 HTTP 200
 [Asserts]
@@ -16,6 +17,7 @@ jsonpath "$.movie.version" == 1
 
 # Show Movie with ID 2
 GET http://localhost:4000/v1/movies/2
+Authorization: Bearer {{auth_token}}
 
 HTTP 200
 [Asserts]
@@ -32,6 +34,7 @@ jsonpath "$.movie.version" == 1
 
 # Show Movie with non-existent ID
 GET http://localhost:4000/v1/movies/99
+Authorization: Bearer {{auth_token}}
 
 HTTP 404
 [Asserts]
@@ -41,6 +44,7 @@ jsonpath "$.error" == "the requested resource could not be found"
 
 # Show Movie with invalid ID
 GET http://localhost:4000/v1/movies/abc
+Authorization: Bearer {{auth_token}}
 
 HTTP 404
 [Asserts]

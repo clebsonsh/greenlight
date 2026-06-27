@@ -23,10 +23,12 @@ if [ -n "$body" ]; then
   RESULTS=$(seq 1 "$count" | xargs -P "$count" -I {} curl -s -o /dev/null -w "%{http_code}\n" \
     -X "$method" "$url" \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer RSTUVWXYZABCDEFGHIJKLMNOPQ" \
     -d "$body")
 else
   RESULTS=$(seq 1 "$count" | xargs -P "$count" -I {} curl -s -o /dev/null -w "%{http_code}\n" \
-    -X "$method" "$url")
+    -X "$method" "$url" \
+    -H "Authorization: Bearer RSTUVWXYZABCDEFGHIJKLMNOPQ")
 fi
 
 END=$(date +%s%N)

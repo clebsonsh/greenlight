@@ -1,5 +1,7 @@
 # Update Movie: Full update (ID 1)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "Moana 2",
     "year": 2024,
@@ -26,6 +28,8 @@ jsonpath "$.movie.version" == 2
 
 # Update Movie: Partial update - only title (ID 1)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "Moana: The Series"
 }
@@ -41,6 +45,8 @@ jsonpath "$.movie.version" == 3
 
 # Update Movie: Partial update - only year (ID 1)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "year": 2023
 }
@@ -55,6 +61,8 @@ jsonpath "$.movie.version" == 4
 
 # Update Movie: Partial update - only genres (ID 1)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "genres": ["animation", "comedy"]
 }
@@ -69,6 +77,8 @@ jsonpath "$.movie.version" == 5
 
 # Update Movie: Partial update - only runtime (ID 1)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "runtime": "115 mins"
 }
@@ -82,6 +92,8 @@ jsonpath "$.movie.version" == 6
 
 # Update Movie: Empty object (valid - no changes)
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {}
 
 HTTP 200
@@ -92,6 +104,8 @@ jsonpath "$.movie.version" == 7
 
 # Update Movie: Update another movie (ID 2)
 PATCH http://localhost:4000/v1/movies/2
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "Black Panther: Wakanda Forever",
     "year": 2022,
@@ -116,6 +130,8 @@ jsonpath "$.movie.version" == 2
 
 # Update Movie: Non-existent ID
 PATCH http://localhost:4000/v1/movies/999
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "Non-existent Movie"
 }
@@ -128,6 +144,8 @@ jsonpath "$.error" == "the requested resource could not be found"
 
 # Update Movie: Invalid ID format
 PATCH http://localhost:4000/v1/movies/abc
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "Invalid ID Movie"
 }
@@ -140,6 +158,7 @@ jsonpath "$.error" == "the requested resource could not be found"
 
 # Update Movie: Empty Body
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
 
 HTTP 400
 [Asserts]
@@ -149,6 +168,8 @@ jsonpath "$.error" == "body must not be empty"
 
 # Update Movie: Malformed JSON
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 ```
 {"title": "Moana",}
 ```
@@ -161,6 +182,8 @@ jsonpath "$.error" == "body contains badly-formed JSON (at character 19)"
 
 # Update Movie: Incorrect Type for year
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "year": "two thousand twenty four"
 }
@@ -173,6 +196,8 @@ jsonpath "$.error" == "body contains incorrect JSON type for field \"year\""
 
 # Update Movie: Unknown key
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "rating": 5
 }
@@ -185,6 +210,8 @@ jsonpath "$.error" == "body contains unknown key \"rating\""
 
 # Update Movie: Multiple JSON values
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 ```
 {"title": "Moana"}{"title": "Moana 2"}
 ```
@@ -197,6 +224,8 @@ jsonpath "$.error" == "body must only contain a single JSON value"
 
 # Update Movie: Too large body
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 file,large_body.json;
 
 HTTP 400
@@ -207,6 +236,8 @@ jsonpath "$.error" == "body must not be larger than 1048576 bytes"
 
 # Update Movie: Empty title
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "title": ""
 }
@@ -219,6 +250,8 @@ jsonpath "$.error.title" == "must be provided"
 
 # Update Movie: Too Long Title
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "title": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 }
@@ -231,6 +264,8 @@ jsonpath "$.error.title" == "must not be more than 500 bytes long"
 
 # Update Movie: Year Before 1888
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "year": 1887
 }
@@ -243,6 +278,8 @@ jsonpath "$.error.year" == "must be greater than 1888"
 
 # Update Movie: Year in Future
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "year": 2027
 }
@@ -255,6 +292,8 @@ jsonpath "$.error.year" == "must not be in the future"
 
 # Update Movie: Zero Runtime
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "runtime": "0 mins"
 }
@@ -267,6 +306,8 @@ jsonpath "$.error.runtime" == "must be provided"
 
 # Update Movie: Empty Genres
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "genres": []
 }
@@ -279,6 +320,8 @@ jsonpath "$.error.genres" == "must contain at least 1 genre"
 
 # Update Movie: Too Many Genres
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "genres": ["a", "b", "c", "d", "e", "f"]
 }
@@ -291,6 +334,8 @@ jsonpath "$.error.genres" == "must not contain more than 5 genres"
 
 # Update Movie: Zero Year
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "year": 0
 }
@@ -303,6 +348,8 @@ jsonpath "$.error.year" == "must be provided"
 
 # Update Movie: Duplicate Genres
 PATCH http://localhost:4000/v1/movies/1
+Authorization: Bearer {{auth_token}}
+
 {
     "genres": ["action", "action"]
 }
