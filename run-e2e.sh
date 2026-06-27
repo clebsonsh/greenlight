@@ -49,6 +49,8 @@ hurl --test http/v1/movies/show.hurl
 hurl --test http/v1/movies/update.hurl
 hurl --test http/v1/movies/delete.hurl
 hurl --test http/v1/users/create.hurl
+./http/v1/scripts/seed-activation.sh
+hurl --test http/v1/users/activate.hurl
 
 echo ""
 echo "${BOLD}${YELLOW}━━━ Rate Limit Tests ━━━${NC}"

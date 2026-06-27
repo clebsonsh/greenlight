@@ -6,7 +6,7 @@ POST http://localhost:4000/v1/users
     "password": "password123"
 }
 
-HTTP 201
+HTTP 202
 [Asserts]
 header "Content-Type" == "application/json"
 jsonpath "$.user.name" == "Alice Smith"
@@ -25,7 +25,7 @@ POST http://localhost:4000/v1/users
     "password": "securepass1"
 }
 
-HTTP 201
+HTTP 202
 [Asserts]
 header "Content-Type" == "application/json"
 jsonpath "$.user.name" == "Bob Jones"
