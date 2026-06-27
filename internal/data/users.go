@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
 	"errors"
 	"time"
@@ -21,7 +22,7 @@ type User struct {
 	Email     string    `json:"email"`
 	Password  password  `json:"-"`
 	Activated bool      `json:"activated"`
-	Version   int       `json:"-"`
+	Version   int32     `json:"-"`
 }
 
 type password struct {
@@ -55,7 +56,7 @@ func (p *password) Matches(plaintextPassword string) (bool, error) {
 	return true, nil
 }
 
-func ValidadeName(v *validator.Validator, name string) {
+func ValidateName(v *validator.Validator, name string) {
 	v.Check(name != "", "name", "must be provided")
 	v.Check(len(name) <= 500, "name", "must not be more than 500 bytes long")
 }
@@ -132,7 +133,7 @@ func (m UserModel) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func ( m UserModel) Update(user *User) error {
+func (m UserModel) Update(user *User) error {
 	query := `
 		UPDATE users
 		SET name = $1, email = $2, password_hash = $3, activated = $4, version = version + 1
@@ -163,5 +164,52 @@ func ( m UserModel) Update(user *User) error {
 		}
 	}
 
-	return  nil
+	return nil
+}
+
+func (m UserModel) GetForToken(tokenScope, tokenPlaintext string) (*User, error) {
+	query := `
+		SELECT
+			u.id,
+			u.created_at,
+			u.name,
+			u.email,
+			u.password_hash,
+			u.activated,
+			u.version
+		FROM users AS u
+		INNER JOIN tokens AS t
+			ON u.id = t.user_id
+		WHERE t.hash = $1
+			AND t.scope = $2
+			AND t.expiry > $3`
+
+	tokenHash := sha256.Sum256([]byte(tokenPlaintext))
+	args := []any{tokenHash[:], tokenScope, time.Now()}
+
+	var user User
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
+		&user.ID,
+		&user.CreatedAt,
+		&user.Name,
+		&user.Email,
+		&user.Password.hash,
+		&user.Activated,
+		&user.Version,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &user, nil
 }
