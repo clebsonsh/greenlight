@@ -55,3 +55,13 @@ HTTP 403
 [Asserts]
 header "Content-Type" == "application/json"
 jsonpath "$.error" == "your user account must be activated to access this resource"
+
+
+# Auth: Valid token and activated but user lacks permissions
+GET http://localhost:4000/v1/movies
+Authorization: Bearer BBCDEFGHIJKLMNOPQRSTUVWXYZ
+
+HTTP 403
+[Asserts]
+header "Content-Type" == "application/json"
+jsonpath "$.error" == "your user account doesn't have the necessary permissions to access this resource"
