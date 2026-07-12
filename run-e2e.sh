@@ -54,6 +54,9 @@ hurl --test http/v1/users/create.hurl
 ./http/v1/scripts/seed-activation.sh
 hurl --test http/v1/users/activate.hurl
 hurl --test http/v1/tokens/authentication.hurl
+./http/v1/scripts/test-api-permissions.sh
+hurl --test http/v1/users/verify_permissions.hurl
+
 
 echo ""
 echo "${BOLD}${YELLOW}━━━ Rate Limit Tests ━━━${NC}"
