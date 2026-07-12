@@ -18,10 +18,10 @@ lsof -ti :4000 | xargs kill -9 2>/dev/null || true
 lsof -ti :4001 | xargs kill -9 2>/dev/null || true
 
 # Start normal server (port 4000, no rate limiter)
-go run ./cmd/api -port=4000 -limiter-enabled=false > /dev/null 2>&1 &
+go run ./cmd/api -port=4000 -cors-trusted-origins="http://localhost:9000" -limiter-enabled=false > /dev/null 2>&1 &
 
 # Start rate limit server (port 4001, with rate limiter)
-go run ./cmd/api -port=4001 > /dev/null 2>&1 &
+go run ./cmd/api -port=4001 -cors-trusted-origins="http://localhost:9000" > /dev/null 2>&1 &
 
 # Wait for both servers
 echo "Waiting for servers to start..."
@@ -56,7 +56,7 @@ hurl --test http/v1/users/activate.hurl
 hurl --test http/v1/tokens/authentication.hurl
 ./http/v1/scripts/test-api-permissions.sh
 hurl --test http/v1/users/verify_permissions.hurl
-
+hurl --test http/v1/cors.hurl
 
 echo ""
 echo "${BOLD}${YELLOW}━━━ Rate Limit Tests ━━━${NC}"
