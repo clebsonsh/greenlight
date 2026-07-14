@@ -89,3 +89,33 @@ build/api:
 	@echo 'Building cmd/api...'
 	go build -a -ldflags='-s' -o=./bin/api ./cmd/api
 	GOOS=linux GOARCH=amd64 go build -a -ldflags='-s' -o=./bin/linux_amd64/api ./cmd/api
+
+# ==================================================================================== #
+# PROD
+# ==================================================================================== #
+
+## production/connect: connect to the production server
+.PHONY: production/connect
+production/connect:
+	ssh greenlight@${PRODUCTION_HOST_IP}
+
+## production/deploy/api: deploy the api to production
+.PHONY: production/deploy/api
+production/deploy/api:
+	rsync -P ./bin/linux_amd64/api greenlight@${PRODUCTION_HOST_IP}:~
+	rsync -rP --delete ./migrations greenlight@${PRODUCTION_HOST_IP}:~
+	ssh -t greenlight@${PRODUCTION_HOST_IP} 'migrate -path ~/migrations -database $$GREENLIGHT_DB_DSN up'
+	rsync -P ./remote/production/api.service greenlight@${PRODUCTION_HOST_IP}:~
+	rsync -P ./remote/production/Caddyfile greenlight@${PRODUCTION_HOST_IP}:~
+	rsync -P ./remote/production/mailpit.service greenlight@${PRODUCTION_HOST_IP}:~
+	ssh -t greenlight@${PRODUCTION_HOST_IP} '\
+		migrate -path ~/migrations -database $$GREENLIGHT_DB_DSN up \
+		&& sudo mv ~/api.service /etc/systemd/system/ \
+		&& sudo systemctl enable api \
+		&& sudo systemctl restart api \
+		&& sudo mv ~/Caddyfile /etc/caddy/ \
+		&& sudo systemctl reload caddy \
+		&& sudo mv ~/mailpit.service /etc/systemd/system/ \
+		&& sudo systemctl enable mailpit \
+		&& sudo systemctl restart mailpit \
+	'
