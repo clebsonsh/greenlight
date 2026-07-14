@@ -8,6 +8,9 @@ export YELLOW='\033[0;33m'
 export NC='\033[0m'
 export BOLD='\033[1m'
 
+# Import env vars
+. .envrc
+
 # Run migrations
 echo "Waiting for database reset..."
 migrate -path=migrations -database=$GREENLIGHT_DB_DSN drop -f
@@ -18,10 +21,10 @@ lsof -ti :4000 | xargs kill -9 2>/dev/null || true
 lsof -ti :4001 | xargs kill -9 2>/dev/null || true
 
 # Start normal server (port 4000, no rate limiter)
-go run ./cmd/api -port=4000 -cors-trusted-origins="http://localhost:9000" -limiter-enabled=false > /dev/null 2>&1 &
+go run ./cmd/api -port=4000 -db-dsn=$GREENLIGHT_DB_DSN -cors-trusted-origins="http://localhost:9000" -limiter-enabled=false > /dev/null 2>&1 &
 
 # Start rate limit server (port 4001, with rate limiter)
-go run ./cmd/api -port=4001 -cors-trusted-origins="http://localhost:9000" > /dev/null 2>&1 &
+go run ./cmd/api -port=4001 -db-dsn=$GREENLIGHT_DB_DSN -cors-trusted-origins="http://localhost:9000" > /dev/null 2>&1 &
 
 # Wait for both servers
 echo "Waiting for servers to start..."
