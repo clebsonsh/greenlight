@@ -57,6 +57,10 @@ tidy:
 	go fmt ./...
 	@echo 'Tidying module dependencies...'
 	go mod tidy
+	@echo 'Verifying and vendoring module dependencies...'
+	go mod verify
+	go mod vendor
+	
 
 ## audit: run quality control checks
 .PHONY: audit
@@ -74,3 +78,14 @@ audit:
 .PHONY: e2e
 e2e: confirm/destructive
 	./run-e2e.sh
+
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/api: build the cmd/api application
+.PHONY: build/api
+build/api:
+	@echo 'Building cmd/api...'
+	go build -a -ldflags='-s' -o=./bin/api ./cmd/api
+	GOOS=linux GOARCH=amd64 go build -a -ldflags='-s' -o=./bin/linux_amd64/api ./cmd/api

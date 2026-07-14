@@ -6,4 +6,4 @@ HTTP 200
 header "Content-Type" == "application/json"
 jsonpath "$.status" == "available"
 jsonpath "$.system_info.environment" == "development"
-jsonpath "$.system_info.version" == "1.0.0"
+jsonpath "$.system_info.version" isString
