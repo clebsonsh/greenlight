@@ -1,0 +1,13 @@
+[Unit]
+Description=Mailpit Email Testing Server
+After=network.target
+
+[Service]
+Type=simple
+User=greenlight
+Group=greenlight
+ExecStart=/usr/local/bin/mailpit --database /tmp/mailpit.db
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
